@@ -1,18 +1,16 @@
-name: RTP-Auto-Test  # 生產線的名字
+name: RTP-Docker-Test
 
-on: [push]  # 只要有人上傳程式碼 (Push)，就啟動
+on: [push]
 
 jobs:
-  run-test:
-    runs-on: ubuntu-latest  # 借用一台 Linux 虛擬機來跑
+  build-and-run:
+    runs-on: ubuntu-latest
     steps:
       - name: 1. 取得程式碼
         uses: actions/checkout@v3
 
-      - name: 2. 安裝 Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
+      - name: 2. 組裝 Docker 貨櫃 (Build Image)
+        run: docker build -t my-rtp-image .
 
-      - name: 3. 執行 RTP 模擬測試
-        run: python rtp_test.py
+      - name: 3. 在貨櫃中執行測試 (Run Container)
+        run: docker run my-rtp-image
