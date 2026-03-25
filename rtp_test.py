@@ -9,7 +9,7 @@ def simulate_rtp(total_spins, target_rtp=90.0):
     for _ in range(total_spins):
         total_bet += bet_per_spin
         if random.randint(1, 100) <= 10: # 10% 中獎率
-            total_win += 90 # 中獎拿 90
+            total_win += 200 # 中獎拿 90
             
     actual_rtp = (total_win / total_bet) * 100
     print(f"模擬次數: {total_spins}, 目標 RTP: {target_rtp}%, 實際 RTP: {actual_rtp:.2f}%")
