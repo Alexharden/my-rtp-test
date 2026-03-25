@@ -14,3 +14,9 @@ jobs:
 
       - name: 3. 在貨櫃中執行測試 (Run Container)
         run: docker run my-rtp-image
+        
+      - name: 4. 儲存測試報告
+        uses: actions/upload-artifact@v4
+        with:
+          name: rtp-report  # 下載時的資料夾名稱
+          path: test_report.txt # 要抓哪個檔案
