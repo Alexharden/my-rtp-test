@@ -23,4 +23,4 @@ def simulate_rtp(total_spins, target_rtp=90.0):
         sys.exit(0)
 
 if __name__ == "__main__":
-    simulate_rtp(100000) # 跑 10 萬次
+    simulate_rtp(1000000) # 跑 100 萬次
