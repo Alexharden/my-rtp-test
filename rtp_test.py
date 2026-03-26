@@ -25,4 +25,4 @@ def simulate_rtp(total_spins, target_rtp=90.0):
 if __name__ == "__main__":
     simulate_rtp(1000000) # 跑 100 萬次
     with open("test_report.txt", "w") as f:
-    f.write(f"Actual RTP: {actual_rtp:.2f}%")
+        f.write(f"Actual RTP: {actual_rtp:.2f}%")
