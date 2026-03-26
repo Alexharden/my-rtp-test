@@ -5,24 +5,30 @@ def simulate_rtp(total_spins, target_rtp=90.0):
     bet_per_spin = 10
     total_bet = 0
     total_win = 0
-    
     for _ in range(total_spins):
         total_bet += bet_per_spin
-        if random.randint(1, 100) <= 10: # 10% 中獎率
-            total_win += 90 # 中獎拿 90
-            
+        if random.randint(1, 100) <= 10:
+            total_win += 90 
     actual_rtp = (total_win / total_bet) * 100
     print(f"模擬次數: {total_spins}, 目標 RTP: {target_rtp}%, 實際 RTP: {actual_rtp:.2f}%")
-    
-    # 如果偏差超過 1%，我們就判定測試失敗 (Bug)
-    if abs(actual_rtp - target_rtp) > 1.0:
-        print("❌ 測試失敗：RTP 偏差過大！")
-        sys.exit(1) # 回傳錯誤代碼，讓 CI 變紅燈
-    else:
-        print("✅ 測試通過：RTP 在正常範圍內。")
-        sys.exit(0)
+
+    return actual_rtp
 
 if __name__ == "__main__":
-    simulate_rtp(1000000) # 跑 100 萬次
+    target = 90.0
+    # 1. 先跑測試
+    print("正在執行模擬...")
+    res_rtp = simulate_rtp(1000000, target)
+    
+    # 2. 【關鍵】先寫入檔案，確保檔案一定會產生
+    print(f"實際 RTP: {res_rtp:.2f}%。正在寫入報告...")
     with open("test_report.txt", "w") as f:
-        f.write(f"Actual RTP: {actual_rtp:.2f}%")
+        f.write(f"Actual RTP: {res_rtp:.2f}%")
+    
+    # 3. 最後才判斷 Exit Code
+    if abs(res_rtp - target) <= 1.0:
+        print("✅ 測試通過")
+        sys.exit(0)
+    else:
+        print("❌ 測試失敗")
+        sys.exit(1)
