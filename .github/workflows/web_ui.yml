@@ -1,0 +1,24 @@
+- name: 執行 Web 自動化測試
+        run: |
+          # 安裝 Playwright (新一代自動化工具)
+          pip install playwright
+          playwright install chromium --with-deps
+          
+          # 跑一個簡單的 Python 腳本去開啟網頁並截圖
+          python -c "
+          from playwright.sync_api import sync_playwright
+          with sync_playwright() as p:
+              browser = p.chromium.launch()
+              # 模擬 H5 (手機版)
+              iphone = p.devices['iPhone 14']
+              page = browser.new_context(**iphone).new_page()
+              page.goto('https://www.google.com') # 換成你的產品網址
+              page.screenshot(path='h5_screenshot.png')
+              browser.close()
+          "
+
+      - name: 儲存截圖報告
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-ui-report
+          path: h5_screenshot.png
