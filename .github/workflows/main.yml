@@ -9,14 +9,20 @@ jobs:
       - name: 1. 取得程式碼
         uses: actions/checkout@v3
 
-      - name: 2. 組裝 Docker 貨櫃 (Build Image)
+      - name: 2. 組裝 Docker 貨櫃
         run: docker build -t my-rtp-image .
 
-      - name: 3. 在貨櫃中執行測試 (Run Container)
-        run: docker run my-rtp-image
-        
-      - name: 4. 儲存測試報告
+      - name: 3. 執行測試 (並給貨櫃取名為 tester)
+        # 就算測試失敗 (exit code 1)，我們也希望繼續執行後面的「撈檔案」步驟
+        continue-on-error: true 
+        run: docker run --name tester my-rtp-image
+
+      - name: 4. 從貨櫃中把報告「撈」出來
+        # 把名為 tester 的貨櫃裡 /app/test_report.txt 複製到目前路徑 (.)
+        run: docker cp tester:/app/test_report.txt .
+
+      - name: 5. 儲存測試報告 (這下外面就找得到檔案了)
         uses: actions/upload-artifact@v4
         with:
-          name: rtp-report  # 下載時的資料夾名稱
-          path: test_report.txt # 要抓哪個檔案
+          name: rtp-report
+          path: test_report.txt
