@@ -1,4 +1,15 @@
-- name: 執行 Web 自動化測試
+name: Web-H5-UI-Test
+
+on: [push] # 只要 Push 就觸發
+
+jobs:
+  ui-test-job:
+    runs-on: ubuntu-latest # 使用 GitHub 提供的 Linux 環境
+    steps:
+      - name: 1. 取得程式碼
+        uses: actions/checkout@v3
+
+      - name: 2. 執行 Web 自動化測試
         run: |
           # 安裝 Playwright (新一代自動化工具)
           pip install playwright
@@ -9,15 +20,20 @@
           from playwright.sync_api import sync_playwright
           with sync_playwright() as p:
               browser = p.chromium.launch()
-              # 模擬 H5 (手機版)
+              # 模擬 H5 手機版 (iPhone 14)
               iphone = p.devices['iPhone 14']
-              page = browser.new_context(**iphone).new_page()
-              page.goto('https://www.google.com') # 換成你的產品網址
+              context = browser.new_context(**iphone)
+              page = context.new_page()
+              
+              print('正在開啟網頁...')
+              page.goto('https://www.google.com') # 你可以換成你的產品網址
+              
+              print('正在截圖...')
               page.screenshot(path='h5_screenshot.png')
               browser.close()
           "
 
-      - name: 儲存截圖報告
+      - name: 3. 儲存截圖報告
         uses: actions/upload-artifact@v4
         with:
           name: web-ui-report
