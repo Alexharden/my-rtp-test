@@ -21,10 +21,7 @@ jobs:
           import time # 引入時間套件，為了等一下讓它看起來自然一點
 
           with sync_playwright() as p:
-              # 啟動瀏覽器 (雖然是無頭，但我們模擬真實行為)
               browser = p.chromium.launch()
-              
-              # 模擬 H5 手機版 (iPhone 14)
               iphone = p.devices['iPhone 14']
               context = browser.new_context(**iphone)
               page = context.new_page()
@@ -32,22 +29,17 @@ jobs:
               print('Step 1: 正在開啟 Google 首頁...')
               page.goto('https://www.google.com') 
               
-              # 關鍵進階步驟：互動
               print('Step 2: 找到搜尋框，輸入關鍵字...')
-              # 在手機版 Google 上，搜尋框通常名為 'Search'
-              # 我們用 HTML 的 selector 屬性找到它 (name='q' 是經典作法)
-              search_bar = page.locator('name=q')
+              # 修正點：使用標準 CSS 選擇器 [name="q"]
+              search_bar = page.locator('[name="q"]')
               search_bar.fill('Playwright automated testing')
               
               print('Step 3: 按下 Enter...')
-              # 模擬按下鍵盤的 Enter 鍵
-              page.press('name=q', 'Enter')
+              # 修正點：這裡同樣要用正確的選擇器
+              page.press('[name="q"]', 'Enter')
               
-              # 【專業技巧】等待網頁跳轉與搜尋結果載入
               print('Step 4: 等待搜尋結果載入完成...')
-              # 告訴小精靈：等搜尋結果頁面的網址出現 'search' 字樣為止
               page.wait_for_url('**/search*')
-              # 有時候網頁需要時間渲染，我們多等 1 秒確保圖片都跑出來
               time.sleep(1) 
               
               print('Step 5: 正在截取搜尋結果畫面...')
